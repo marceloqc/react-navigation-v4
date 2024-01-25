@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "types": "typescript/react-navigation.d.ts",
   "repository": {
-    "url": "git@github.com:react-navigation/react-navigation.git",
+    "url": "git+https://github.com/marceloqc/react-navigation-v4",
     "type": "git"
   },
   "author": "Adam Miskiewicz <adam@sk3vy.com>, Eric Vicenti <ericvicenti@gmail.com>, Brent Vatne <brent@expo.io>, Satyajit Sahoo <satyajit.happy@gmail.com>",
