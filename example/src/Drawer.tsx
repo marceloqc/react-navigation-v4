@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { ScrollView, StyleProp, TextStyle } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import {
@@ -11,12 +11,9 @@ import {
   createStackNavigator,
   NavigationStackScreenProps,
 } from 'react-navigation-stack';
-import {
-  createDrawerNavigator,
-  NavigationDrawerScreenProps,
-} from 'react-navigation-drawer';
-import { Button } from './Shared/ButtonWithMargin';
-import SampleText from './Shared/SampleText';
+import { createDrawerNavigator } from 'react-navigation-drawer';
+import { Button } from './commonComponents/ButtonWithMargin';
+import SampleText from './SampleText';
 
 const MyNavScreen = ({
   navigation,
@@ -28,13 +25,7 @@ const MyNavScreen = ({
   <ScrollView>
     <SafeAreaView forceInset={{ top: 'always' }}>
       <SampleText>{banner}</SampleText>
-      <Button
-        onPress={() => {
-          // @ts-ignore
-          navigation.openDrawer();
-        }}
-        title="Open drawer"
-      />
+      <Button onPress={() => navigation.openDrawer()} title="Open drawer" />
       <Button
         onPress={() => navigation.navigate('Email')}
         title="Open other screen"
@@ -45,10 +36,11 @@ const MyNavScreen = ({
   </ScrollView>
 );
 
-const InboxScreen = ({ navigation }: NavigationDrawerScreenProps) => (
-  <MyNavScreen banner="Inbox Screen" navigation={navigation} />
-);
-
+const InboxScreen = ({
+  navigation,
+}: {
+  navigation: NavigationScreenProp<NavigationState>;
+}) => <MyNavScreen banner="Inbox Screen" navigation={navigation} />;
 InboxScreen.navigationOptions = {
   headerTitle: 'Inbox',
 };
@@ -60,7 +52,6 @@ const EmailScreen = ({ navigation }: NavigationStackScreenProps) => (
 const DraftsScreen = ({ navigation }: NavigationStackScreenProps) => (
   <MyNavScreen banner="Drafts Screen" navigation={navigation} />
 );
-
 DraftsScreen.navigationOptions = {
   headerTitle: 'Drafts',
 };

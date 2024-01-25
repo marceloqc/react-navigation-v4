@@ -1,188 +1,131 @@
-import * as React from 'react';
+import React from 'react';
+import { ScrollView } from 'react-native';
 import {
-  Button,
-  View,
-  Text,
-  Dimensions,
-  Switch,
-  TextInput,
-} from 'react-native';
+  NavigationScreenProp,
+  Themed,
+  SafeAreaView,
+  NavigationState,
+} from 'react-navigation';
 import {
   createStackNavigator,
-  CardStyleInterpolators,
   NavigationStackScreenProps,
-  StackCardStyleInterpolator,
 } from 'react-navigation-stack';
+import { Button } from './commonComponents/ButtonWithMargin';
+import SampleText from './SampleText';
 
-const gestureResponseDistance = {
-  vertical: Dimensions.get('window').height,
-};
-
-const forVerticalInvertedIOS: StackCardStyleInterpolator = ({
-  current: { progress },
-  layouts: { screen },
-}) => {
-  const translateY = progress.interpolate({
-    inputRange: [0, 1],
-    outputRange: [-screen.height, 0],
-  });
-
-  return {
-    cardStyle: {
-      transform: [
-        // Translation for the animation of the current card
-        { translateY },
-      ],
-    },
-  };
-};
-
-class Modal extends React.Component<NavigationStackScreenProps> {
-  static navigationOptions = ({ navigation }: NavigationStackScreenProps) => {
-    return {
-      title: 'Modal',
-      cardStyleInterpolator:
-        navigation.getParam('gestureDirection', 'vertical') ===
-        'vertical-inverted'
-          ? forVerticalInvertedIOS
-          : CardStyleInterpolators.forVerticalIOS,
-      gestureDirection: navigation.getParam('gestureDirection', 'vertical'),
-      cardTransparent: true,
-      gestureResponseDistance,
-    };
-  };
-
-  render() {
-    return (
-      <View
-        style={{
-          backgroundColor: 'white',
-          paddingVertical: 20,
-          paddingHorizontal: 20,
-          height: Dimensions.get('screen').height,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 10 },
-          shadowOpacity: 0.2,
-          shadowRadius: 4,
-        }}
+const MyNavScreen = ({
+  navigation,
+  banner,
+}: {
+  navigation: NavigationScreenProp<NavigationState & any>;
+  banner: string;
+}) => (
+  <ScrollView>
+    <SafeAreaView
+      forceInset={{
+        top: navigation.state.routeName === 'HeaderTest' ? 'always' : 'never',
+      }}
+    >
+      <SampleText>{banner}</SampleText>
+      <Button
+        onPress={() => navigation.navigate('Profile', { name: 'Jane' })}
+        title="Go to a profile screen"
       />
-    );
-  }
-}
-
-class ListScreen extends React.Component<
-  NavigationStackScreenProps,
-  { isInverted: boolean }
-> {
-  // eslint-disable-next-line react/sort-comp
-  static navigationOptions = {
-    title: 'My Modal',
-  };
-
-  state = { isInverted: false };
-
-  onSwitch = () =>
-    this.setState((prevState) => ({ isInverted: !prevState.isInverted }));
-
-  render() {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>List Screen</Text>
-        <Text>A list may go here</Text>
+      <Button
+        onPress={() => navigation.navigate('HeaderTest')}
+        title="Go to a header toggle screen"
+      />
+      {navigation.state.routeName === 'HeaderTest' && (
         <Button
-          title="Go to Details"
-          onPress={() => this.props.navigation.navigate('Details')}
-        />
-        <Button
-          title="Go back to all examples"
-          onPress={() => this.props.navigation.navigate('Index')}
-        />
-        <Text>Invert modal gesture direction:</Text>
-        <Switch
-          style={{ margin: 10 }}
-          onValueChange={this.onSwitch}
-          value={this.state.isInverted}
-        />
-        <Button
-          title="Show Modal"
+          title="Toggle Header"
           onPress={() =>
-            this.props.navigation.push('Modal', {
-              gestureDirection: this.state.isInverted
-                ? 'vertical-inverted'
-                : 'vertical',
+            navigation.setParams({
+              headerVisible:
+                !navigation.state.params ||
+                !navigation.state.params.headerVisible,
             })
           }
         />
-      </View>
-    );
-  }
-}
+      )}
+      <Button onPress={() => navigation.goBack(null)} title="Go back" />
+    </SafeAreaView>
+    <Themed.StatusBar />
+  </ScrollView>
+);
 
-class DetailsScreen extends React.Component<NavigationStackScreenProps> {
-  static navigationOptions = {
-    // Uncomment below to test inverted modal gesture
-    // gestureDirection: 'inverted',
-  };
+const MyHomeScreen = ({
+  navigation,
+}: {
+  navigation: NavigationScreenProp<NavigationState>;
+}) => <MyNavScreen banner="Home Screen" navigation={navigation} />;
+MyHomeScreen.navigationOptions = {
+  title: 'Welcome',
+};
 
-  render() {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Details Screen</Text>
-        <Button
-          title="Go to Details... again"
-          onPress={() => this.props.navigation.push('Details')}
-        />
-        <Button
-          title="Go to inputs..."
-          onPress={() => this.props.navigation.push('Inputs')}
-        />
-        <Button
-          title="Go to List"
-          onPress={() => this.props.navigation.navigate('List')}
-        />
-        <Button
-          title="Go back"
-          onPress={() => this.props.navigation.goBack()}
-        />
-        <Button
-          title="Go back to all examples"
-          onPress={() => this.props.navigation.navigate('Index')}
-        />
-      </View>
-    );
-  }
-}
-function InputsScreen({ navigation }: NavigationStackScreenProps) {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Inputs Screen</Text>
-      <TextInput
-        defaultValue="sample"
-        autoFocus
-        style={{ backgroundColor: 'blue' }}
-      />
-      <TextInput defaultValue="sample" style={{ backgroundColor: 'red' }} />
-      <TextInput defaultValue="sample" style={{ backgroundColor: 'green' }} />
-      <Button
-        title="Go to inputs... again"
-        onPress={() => navigation.push('Inputs')}
-      />
-    </View>
-  );
-}
+const MyProfileScreen = ({
+  navigation,
+}: {
+  navigation: NavigationScreenProp<NavigationState>;
+}) => (
+  <MyNavScreen
+    banner={`${navigation.state.params!.name}'s Profile`}
+    navigation={navigation}
+  />
+);
+MyProfileScreen.navigationOptions = ({
+  navigation,
+}: {
+  navigation: NavigationScreenProp<NavigationState>;
+}) => ({
+  title: `${navigation.state.params!.name}'s Profile!`,
+});
 
-export default createStackNavigator(
+const ProfileNavigator = createStackNavigator(
   {
-    List: ListScreen,
-    Details: DetailsScreen,
-    Modal: Modal,
-    Inputs: {
-      screen: InputsScreen,
-      navigationOptions: { gestureDirection: 'vertical' },
+    Home: {
+      screen: MyHomeScreen,
+    },
+    Profile: {
+      path: 'people/:name',
+      screen: MyProfileScreen,
     },
   },
   {
-    initialRouteName: 'List',
+    defaultNavigationOptions: {
+      headerLeft: null,
+    },
     mode: 'modal',
   }
 );
+
+const MyHeaderTestScreen = ({ navigation }: NavigationStackScreenProps) => (
+  <MyNavScreen banner="Full screen view" navigation={navigation} />
+);
+
+MyHeaderTestScreen.navigationOptions = ({
+  navigation,
+}: NavigationStackScreenProps) => {
+  const headerVisible =
+    navigation.state.params && navigation.state.params.headerVisible;
+  return {
+    header: headerVisible ? undefined : null,
+    title: 'Now you see me',
+  };
+};
+
+const ModalStack = createStackNavigator(
+  {
+    HeaderTest: { screen: MyHeaderTestScreen },
+    ProfileNavigator: {
+      screen: ProfileNavigator,
+    },
+  },
+  {
+    defaultNavigationOptions: {
+      header: null,
+    },
+    mode: 'modal',
+  }
+);
+
+export default ModalStack;

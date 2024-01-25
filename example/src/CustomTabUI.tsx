@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import {
   Alert,
   TouchableOpacity,
@@ -20,7 +20,7 @@ import {
   createMaterialTopTabNavigator,
   MaterialTopTabBar,
 } from 'react-navigation-tabs';
-import { Button } from './Shared/ButtonWithMargin';
+import { Button } from './commonComponents/ButtonWithMargin';
 
 interface Props {
   navigation: NavigationScreenProp<NavigationState>;
@@ -161,7 +161,6 @@ const SimpleTabs = createMaterialTopTabNavigator(
 );
 
 class TabNavigator extends React.Component<Props> {
-  // eslint-disable-next-line react/sort-comp
   static contextType = ThemeContext;
 
   static router = SimpleTabs.router;

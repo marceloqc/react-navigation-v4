@@ -1,5 +1,6 @@
 /* eslint-disable import/no-commonjs */
 
 module.exports = {
-  presets: ['module:metro-react-native-babel-preset'],
+  trailingComma: 'es5',
+  singleQuote: true,
 };

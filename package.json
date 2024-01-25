@@ -1,73 +1,95 @@
 {
   "name": "react-navigation",
-  "version": "4.4.6",
-  "description": "React Navigation",
+  "version": "4.0.10",
+  "description": "Routing and navigation for your React Native apps",
+  "main": "src/react-navigation.js",
+  "types": "typescript/react-navigation.d.ts",
+  "repository": {
+    "url": "git+https://github.com/marceloqc/react-navigation-v4",
+    "type": "git"
+  },
+  "author": "Adam Miskiewicz <adam@sk3vy.com>, Eric Vicenti <ericvicenti@gmail.com>, Brent Vatne <brent@expo.io>, Satyajit Sahoo <satyajit.happy@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "bootstrap": "yarn example && yarn",
+    "example": "yarn --cwd example",
+    "test": "jest",
+    "lint": "eslint . --ext '.js,.ts,.tsx'",
+    "typescript": "tsc --noEmit",
+    "release": "release-it"
+  },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/marceloqc/react-navigation-v4"
+  "files": [
+    "src",
+    "NavigationTestUtils.js",
+    "typescript"
+  ],
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
   },
-  "author": "Adam Miskiewicz <adam@sk3vy.com>, Eric Vicenti <ericvicenti@gmail.com>, Brent Vatne <brent@expo.io>, Satyajit Sahoo <satyajit.happy@gmail.com>",
-  "scripts": {
-    "lint": "eslint --ext '.js,.ts,.tsx' .",
-    "typescript": "tsc --noEmit --composite false",
-    "test": "jest",
-    "prerelease": "yarn lerna run clean",
-    "release": "yarn lerna publish",
-    "example": "yarn --cwd example"
+  "dependencies": {
+    "@react-navigation/core": "^3.5.1",
+    "@react-navigation/native": "^3.6.2"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.12.1",
-    "@babel/plugin-proposal-optional-chaining": "^7.12.1",
-    "@babel/preset-env": "^7.12.1",
-    "@babel/preset-react": "^7.12.1",
-    "@babel/preset-typescript": "^7.12.1",
-    "@babel/runtime": "^7.12.1",
-    "@commitlint/config-conventional": "^11.0.0",
-    "@types/jest": "^26.0.15",
-    "babel-jest": "^26.6.1",
-    "commitlint": "^11.0.0",
-    "core-js": "^3.6.5",
-    "eslint": "^7.12.0",
-    "eslint-config-satya164": "^3.1.8",
-    "husky": "^4.2.5",
-    "jest": "^26.6.1",
-    "lerna": "^3.22.1",
-    "prettier": "^2.1.2",
-    "typescript": "^4.0.3"
+    "@commitlint/config-conventional": "^8.0.0",
+    "@release-it/conventional-changelog": "^1.1.0",
+    "@types/jest": "^24.0.18",
+    "@types/react": "^16.9.2",
+    "@types/react-native": "^0.60.9",
+    "codecov": "^3.5.0",
+    "commitlint": "^8.0.0",
+    "eslint": "^5.16.0",
+    "eslint-config-satya164": "^2.4.1",
+    "eslint-plugin-react-native-globals": "^0.1.0",
+    "husky": "^3.0.0",
+    "jest": "^24.9.0",
+    "prettier": "^1.18.2",
+    "react": "16.8.3",
+    "react-native": "~0.59.8",
+    "react-test-renderer": "16.8.3",
+    "release-it": "^12.3.6",
+    "typescript": "^3.6.2"
   },
-  "resolutions": {
-    "react": "~16.13.1",
-    "react-native": "~0.63.2"
+  "jest": {
+    "notify": true,
+    "preset": "react-native",
+    "testRegex": "/__tests__/[^/]+-test\\.js$",
+    "setupFiles": [
+      "<rootDir>/jest-setup.js"
+    ],
+    "coverageDirectory": "./coverage/",
+    "collectCoverage": true,
+    "coverageReporters": [
+      "lcov"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js"
+    ],
+    "coveragePathIgnorePatterns": [
+      "jest-setup.js"
+    ],
+    "moduleNameMapper": {
+      "\\.png$": "<rootDir>/assetsTransformer.js"
+    },
+    "modulePathIgnorePatterns": [
+      "<rootDir>/example/"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!(jest-)?react-native|react-clone-referenced-element|react-navigation-stack|@react-navigation/core|@react-navigation/native)"
+    ]
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "singleQuote": true
   },
   "husky": {
     "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "yarn lint && yarn typescript && yarn test"
+      "pre-commit": "yarn typescript && yarn lint && yarn test",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "testRegex": "/__tests__/.*\\.(test|spec)\\.(js|tsx?)$",
-    "transform": {
-      "^.+\\.(js|ts|tsx)$": "babel-jest"
-    },
-    "setupFiles": [
-      "<rootDir>/jest/setup.js"
-    ],
-    "moduleNameMapper": {
-      "react-navigation-([^/]+)": "<rootDir>/packages/$1/src",
-      "@react-navigation/([^/]+)": "<rootDir>/packages/$1/src"
-    },
-    "preset": "react-native"
-  },
-  "prettier": {
-    "tabWidth": 2,
-    "useTabs": false,
-    "singleQuote": true,
-    "trailingComma": "es5"
   }
 }

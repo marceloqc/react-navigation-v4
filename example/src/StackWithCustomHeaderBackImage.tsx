@@ -10,7 +10,7 @@ import {
   createStackNavigator,
   NavigationStackScreenProps,
 } from 'react-navigation-stack';
-import SampleText from './Shared/SampleText';
+import SampleText from './SampleText';
 
 interface MyNavScreenProps {
   navigation: NavigationScreenProp<NavigationState>;
@@ -52,7 +52,7 @@ interface MyHomeScreenProps {
 
 class MyHomeScreen extends React.Component<MyHomeScreenProps> {
   static navigationOptions = {
-    headerBackTitleVisible: false,
+    headerBackTitle: null,
     title: 'Welcome',
   };
 
@@ -65,14 +65,13 @@ class MyHomeScreen extends React.Component<MyHomeScreenProps> {
 interface MyPhotosScreenProps {
   navigation: NavigationScreenProp<NavigationState>;
 }
-
 class MyPhotosScreen extends React.Component<MyPhotosScreenProps> {
   static navigationOptions = ({
     navigation,
   }: {
     navigation: NavigationScreenProp<NavigationState>;
   }) => ({
-    headerBackTitleVisible: false,
+    headerBackTitle: null,
     title: `${navigation.state.params!.name}'s photos`,
   });
 
@@ -95,7 +94,6 @@ class MyPhotosScreen extends React.Component<MyPhotosScreenProps> {
 interface MyProfileScreenProps {
   navigation: NavigationScreenProp<NavigationState>;
 }
-
 class MyProfileScreen extends React.Component<MyProfileScreenProps> {
   static navigationOptions = {
     title: 'Profile',

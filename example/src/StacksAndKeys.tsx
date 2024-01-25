@@ -1,11 +1,11 @@
-import * as React from 'react';
+import React from 'react';
 import { Text, View } from 'react-native';
 import { Themed } from 'react-navigation';
 import {
   createStackNavigator,
   NavigationStackScreenProps,
 } from 'react-navigation-stack';
-import { Button } from './Shared/ButtonWithMargin';
+import { Button } from './commonComponents/ButtonWithMargin';
 
 class HomeScreen extends React.Component<NavigationStackScreenProps> {
   render() {

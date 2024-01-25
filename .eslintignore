@@ -1,6 +1,5 @@
-node_modules/
 coverage/
-dist/
+node_modules/
 lib/
-web-build/
-web-report/
+build/
+typescript/

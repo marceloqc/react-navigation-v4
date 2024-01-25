@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Text } from 'react-native';
 import {
   Themed,
@@ -14,8 +14,8 @@ import {
 } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { Button } from './Shared/ButtonWithMargin';
-import SampleText from './Shared/SampleText';
+import { Button } from './commonComponents/ButtonWithMargin';
+import SampleText from './SampleText';
 
 const TEXT = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla a hendrerit dui, id consectetur nulla. Curabitur mattis sapien nunc, quis dignissim eros venenatis sit amet. Praesent rutrum dapibus diam quis eleifend. Donec vulputate quis purus sed vulputate. Fusce ipsum felis, cursus at congue vel, consectetur tincidunt purus. Pellentesque et fringilla lorem. In at augue malesuada, sollicitudin ex ut, convallis elit. Curabitur metus nibh, consequat vel libero sit amet, iaculis congue nisl. Maecenas eleifend sodales sapien, fringilla sagittis nisi ornare volutpat. Integer tellus enim, volutpat vitae nisl et, dignissim pharetra leo. Sed sit amet efficitur sapien, at tristique sapien. Aenean dignissim semper sagittis. Nullam sit amet volutpat mi.
 Curabitur auctor orci et justo molestie iaculis. Integer elementum tortor ac ipsum egestas pharetra. Etiam ultrices elementum pharetra. Maecenas lobortis ultrices risus dignissim luctus. Nunc malesuada cursus posuere. Vestibulum tristique lectus pretium pellentesque pellentesque. Nunc ac nisi lacus. Duis ultrices dui ac viverra ullamcorper. Morbi placerat laoreet lacus sit amet ullamcorper.
@@ -51,7 +51,6 @@ class MyNavScreen extends React.Component<Props> {
           <Button onPress={() => navigation.goBack(null)} title="Go back" />
 
           {TEXT.split('\n').map((p, n) => (
-            // eslint-disable-next-line react/no-array-index-key
             <Text key={n} style={{ marginVertical: 10, marginHorizontal: 8 }}>
               {p}
             </Text>

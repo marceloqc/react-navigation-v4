@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { ScrollView, StatusBar } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import {
@@ -12,8 +12,8 @@ import {
   NavigationStackScreenProps,
 } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-import { Button } from './Shared/ButtonWithMargin';
-import SampleText from './Shared/SampleText';
+import { Button } from './commonComponents/ButtonWithMargin';
+import SampleText from './SampleText';
 
 const MyNavScreen = ({
   navigation,
@@ -72,49 +72,56 @@ const MySettingsScreen = ({
   navigation: NavigationScreenProp<NavigationState>;
 }) => <MyNavScreen banner="Settings Screen" navigation={navigation} />;
 
-const TabNav = createBottomTabNavigator({
-  MainTab: {
-    navigationOptions: {
-      tabBarIcon: ({
-        tintColor,
-        focused,
-      }: {
-        tintColor: string;
-        focused: boolean;
-      }) => (
-        <Ionicons
-          name={focused ? 'ios-home' : 'ios-home'}
-          size={26}
-          style={{ color: tintColor }}
-        />
-      ),
-      tabBarLabel: 'Home',
-      title: 'Welcome',
+const TabNav = createBottomTabNavigator(
+  {
+    MainTab: {
+      navigationOptions: {
+        tabBarIcon: ({
+          tintColor,
+          focused,
+        }: {
+          tintColor: string;
+          focused: boolean;
+        }) => (
+          <Ionicons
+            name={focused ? 'ios-home' : 'ios-home'}
+            size={26}
+            style={{ color: tintColor }}
+          />
+        ),
+        tabBarLabel: 'Home',
+        title: 'Welcome',
+      },
+      path: '/',
+      screen: MyHomeScreen,
     },
-    path: '/',
-    screen: MyHomeScreen,
-  },
-  SettingsTab: {
-    navigationOptions: {
-      tabBarIcon: ({
-        tintColor,
-        focused,
-      }: {
-        tintColor: string;
-        focused: boolean;
-      }) => (
-        <Ionicons
-          name={focused ? 'ios-settings' : 'ios-settings'}
-          size={26}
-          style={{ color: tintColor }}
-        />
-      ),
-      title: 'Settings',
+    SettingsTab: {
+      navigationOptions: {
+        tabBarIcon: ({
+          tintColor,
+          focused,
+        }: {
+          tintColor: string;
+          focused: boolean;
+        }) => (
+          <Ionicons
+            name={focused ? 'ios-settings' : 'ios-settings'}
+            size={26}
+            style={{ color: tintColor }}
+          />
+        ),
+        title: 'Settings',
+      },
+      path: '/settings',
+      screen: MySettingsScreen,
     },
-    path: '/settings',
-    screen: MySettingsScreen,
   },
-});
+  {
+    animationEnabled: false,
+    swipeEnabled: false,
+    tabBarPosition: 'bottom',
+  }
+);
 
 TabNav.navigationOptions = ({
   navigation,

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { BorderlessButton } from 'react-native-gesture-handler';
 import {
@@ -12,8 +12,8 @@ import {
   NavigationScreenProp,
 } from 'react-navigation';
 
-import { Button } from './Shared/ButtonWithMargin';
-import SampleText from './Shared/SampleText';
+import { Button } from './commonComponents/ButtonWithMargin';
+import SampleText from './SampleText';
 
 const MyNavScreen = ({
   navigation,
@@ -62,7 +62,7 @@ const CustomTabBar = ({
   const { routes } = navigation.state;
   return (
     <SafeAreaView style={styles.tabContainer}>
-      {routes.map((route) => (
+      {routes.map(route => (
         <BorderlessButton
           onPress={() => navigation.navigate(route.routeName)}
           style={styles.tab}

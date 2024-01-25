@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import {
   ScrollView,
   StatusBar,
@@ -20,8 +20,8 @@ import {
   MaterialTopTabBar,
 } from 'react-navigation-tabs';
 
-import { Button } from './Shared/ButtonWithMargin';
-import SampleText from './Shared/SampleText';
+import { Button } from './commonComponents/ButtonWithMargin';
+import SampleText from './SampleText';
 
 const HEADER_HEIGHT = 64;
 
@@ -147,7 +147,7 @@ const StackNavigator = createStackNavigator(
     Root: {
       screen: TabNavigator,
       navigationOptions: {
-        headerShown: false,
+        header: null,
       },
     },
     NotifSettings: {

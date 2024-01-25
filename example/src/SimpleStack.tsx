@@ -1,141 +1,243 @@
+// tslint:disable no-unused-expression
+
 import * as React from 'react';
-import { Dimensions, Button, View, Text } from 'react-native';
-import { withNavigation } from 'react-navigation';
+import {
+  NavigationActions,
+  NavigationEventPayload,
+  NavigationEventSubscription,
+  SafeAreaView,
+  StackActions,
+  Themed,
+  withNavigation,
+} from 'react-navigation';
 import {
   createStackNavigator,
-  NavigationStackScreenProps,
   NavigationStackProp,
+  NavigationStackScreenProps,
 } from 'react-navigation-stack';
+import { Button } from './commonComponents/ButtonWithMargin';
+import { HeaderButtons } from './commonComponents/HeaderButtons';
+import SampleText from './SampleText';
 
-const Buttons = withNavigation((props: { navigation: NavigationStackProp }) => (
-  <React.Fragment>
-    <Button
-      title="Push Details"
-      onPress={() => props.navigation.push('Details')}
-    />
-    <Button title="PopToTop" onPress={() => props.navigation.popToTop()} />
-    <Button
-      title="Go to Details"
-      onPress={() => props.navigation.navigate('Details')}
-    />
-    <Button
-      title="Replace with List"
-      onPress={() => props.navigation.replace('List')}
-    />
-    <Button
-      title="Go and then go to details quick"
-      onPress={() => {
-        props.navigation.pop();
-        setTimeout(() => {
-          props.navigation.navigate('Details');
-        }, 100);
-      }}
-    />
-    <Button
-      title="Go to Headerless"
-      onPress={() => props.navigation.navigate('Headerless')}
-    />
-    <Button title="Go back" onPress={() => props.navigation.goBack()} />
-    <Button
-      title="Go back quick"
-      onPress={() => {
-        props.navigation.pop();
-        setTimeout(() => {
-          props.navigation.pop();
-        }, 100);
-      }}
-    />
-    <Button
-      title="Go back to all examples"
-      onPress={() => props.navigation.navigate('Index')}
-    />
-  </React.Fragment>
-));
+const DEBUG = false;
 
-class ListScreen extends React.Component {
-  static navigationOptions = {
-    title: 'List',
-  };
+interface MyNavScreenProps {
+  navigation: NavigationStackProp;
+  banner: React.ReactNode;
+}
 
+interface BackButtonProps {
+  navigation: NavigationStackProp;
+}
+
+class MyBackButton extends React.Component<BackButtonProps, any> {
   render() {
     return (
-      <View
-        style={{
-          flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-          // backgroundColor: '#fff',
-        }}
-      >
-        <Text>List Screen</Text>
-        <Text>A list may go here</Text>
-        <Buttons />
-      </View>
+      <HeaderButtons>
+        <HeaderButtons.Item title="Back" onPress={this.navigateBack} />
+      </HeaderButtons>
+    );
+  }
+
+  navigateBack = () => {
+    this.props.navigation.goBack(null);
+  };
+}
+
+const MyBackButtonWithNavigation: any = withNavigation(MyBackButton);
+
+class MyNavScreen extends React.Component<MyNavScreenProps> {
+  render() {
+    const { navigation, banner } = this.props;
+    const { push, replace, popToTop, pop, dismiss } = navigation;
+    return (
+      <SafeAreaView forceInset={{ top: 'never' }}>
+        <SampleText>{banner}</SampleText>
+        <Button
+          onPress={() => push('Profile', { name: 'Jane' })}
+          title="Push a profile screen"
+        />
+        <Button
+          onPress={() =>
+            navigation.dispatch(
+              StackActions.reset({
+                actions: [
+                  NavigationActions.navigate({
+                    params: { name: 'Jane' },
+                    routeName: 'Photos',
+                  }),
+                ],
+                index: 0,
+              })
+            )
+          }
+          title="Reset photos"
+        />
+        <Button
+          onPress={() => navigation.navigate('Photos', { name: 'Jane' })}
+          title="Navigate to a photos screen"
+        />
+        <Button
+          onPress={() => replace('Profile', { name: 'Lucy' })}
+          title="Replace with profile"
+        />
+        <Button onPress={() => popToTop()} title="Pop to top" />
+        <Button onPress={() => pop()} title="Pop" />
+        <Button
+          onPress={() => {
+            if (navigation.goBack()) {
+              console.log('goBack handled');
+            } else {
+              console.log('goBack unhandled');
+            }
+          }}
+          title="Go back"
+        />
+        <Button onPress={() => dismiss()} title="Dismiss" />
+        <Themed.StatusBar />
+      </SafeAreaView>
     );
   }
 }
 
-class DetailsScreen extends React.Component<NavigationStackScreenProps> {
+class MyHomeScreen extends React.Component<NavigationStackScreenProps> {
   static navigationOptions = {
-    title: 'Details',
-    gestureResponseDistance: {
-      horizontal: Dimensions.get('window').width,
-    },
+    title: 'Welcome',
   };
+  s0: NavigationEventSubscription | null = null;
+  s1: NavigationEventSubscription | null = null;
+  s2: NavigationEventSubscription | null = null;
+  s3: NavigationEventSubscription | null = null;
 
-  _goBackInTwoSeconds = () => {
-    setTimeout(() => {
-      this.props.navigation.goBack();
-    }, 2000);
+  componentDidMount() {
+    this.s0 = this.props.navigation.addListener('willFocus', this.onWF);
+    this.s1 = this.props.navigation.addListener('didFocus', this.onDF);
+    this.s2 = this.props.navigation.addListener('willBlur', this.onWB);
+    this.s3 = this.props.navigation.addListener('didBlur', this.onDB);
+  }
+  componentWillUnmount() {
+    this.s0!.remove();
+    this.s1!.remove();
+    this.s2!.remove();
+    this.s3!.remove();
+  }
+  onWF = (a: NavigationEventPayload) => {
+    DEBUG && console.log('willFocus HomeScreen', a);
+  };
+  onDF = (a: NavigationEventPayload) => {
+    DEBUG && console.log('didFocus HomeScreen', a);
+  };
+  onWB = (a: NavigationEventPayload) => {
+    DEBUG && console.log('willBlur HomeScreen', a);
+  };
+  onDB = (a: NavigationEventPayload) => {
+    DEBUG && console.log('didBlur HomeScreen', a);
   };
 
   render() {
+    const { navigation } = this.props;
+    return <MyNavScreen banner="Home Screen" navigation={navigation} />;
+  }
+}
+
+class MyPhotosScreen extends React.Component<NavigationStackScreenProps> {
+  static navigationOptions = {
+    headerLeft: () => <MyBackButtonWithNavigation />,
+    title: 'Photos',
+  };
+  s0: NavigationEventSubscription | null = null;
+  s1: NavigationEventSubscription | null = null;
+  s2: NavigationEventSubscription | null = null;
+  s3: NavigationEventSubscription | null = null;
+
+  componentDidMount() {
+    this.s0 = this.props.navigation.addListener('willFocus', this.onWF);
+    this.s1 = this.props.navigation.addListener('didFocus', this.onDF);
+    this.s2 = this.props.navigation.addListener('willBlur', this.onWB);
+    this.s3 = this.props.navigation.addListener('didBlur', this.onDB);
+  }
+  componentWillUnmount() {
+    this.s0!.remove();
+    this.s1!.remove();
+    this.s2!.remove();
+    this.s3!.remove();
+  }
+  onWF = (a: NavigationEventPayload) => {
+    DEBUG && console.log('willFocus PhotosScreen', a);
+  };
+  onDF = (a: NavigationEventPayload) => {
+    DEBUG && console.log('didFocus PhotosScreen', a);
+  };
+  onWB = (a: NavigationEventPayload) => {
+    DEBUG && console.log('willBlur PhotosScreen', a);
+  };
+  onDB = (a: NavigationEventPayload) => {
+    DEBUG && console.log('didBlur PhotosScreen', a);
+  };
+
+  render() {
+    const { navigation } = this.props;
     return (
-      <View
-        style={{
-          flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-          // backgroundColor: '#fff',
-        }}
-      >
-        <Text>Details Screen</Text>
-        <Button title="Go back in 2s" onPress={this._goBackInTwoSeconds} />
-        <Buttons />
-      </View>
+      <MyNavScreen
+        banner={`${navigation.getParam('name')}'s Photos`}
+        navigation={navigation}
+      />
     );
   }
 }
 
-class HeaderlessScreen extends React.Component {
-  static navigationOptions = {
-    headerShown: false,
+const MyProfileScreen = ({
+  navigation,
+}: {
+  navigation: NavigationStackProp;
+}) => (
+  <MyNavScreen
+    banner={`${
+      navigation.getParam('mode') === 'edit' ? 'Now Editing ' : ''
+    }${navigation.getParam('name')}'s Profile`}
+    navigation={navigation}
+  />
+);
+
+MyProfileScreen.navigationOptions = (props: NavigationStackScreenProps) => {
+  const { navigation } = props;
+  const { state, setParams } = navigation;
+  const { params } = state;
+  return {
+    headerBackImage: params!.headerBackImage,
+    // Render a button on the right side of the header.
+    // When pressed switches the screen to edit mode.
+    headerRight: (
+      <HeaderButtons>
+        <HeaderButtons.Item
+          title={params!.mode === 'edit' ? 'Done' : 'Edit'}
+          onPress={() =>
+            setParams({ mode: params!.mode === 'edit' ? '' : 'edit' })
+          }
+        />
+      </HeaderButtons>
+    ),
+    headerTitle: `${params!.name}'s Profile!`,
   };
+};
 
-  render() {
-    return (
-      <View
-        style={{
-          flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-          // backgroundColor: '#fff',
-        }}
-      >
-        <Text>Headerless Screen</Text>
-        <Buttons />
-      </View>
-    );
-  }
-}
-
-export default createStackNavigator(
+const SimpleStack = createStackNavigator(
   {
-    List: ListScreen,
-    Details: DetailsScreen,
-    Headerless: HeaderlessScreen,
+    Home: {
+      screen: MyHomeScreen,
+    },
+    Photos: {
+      path: 'photos/:name',
+      screen: MyPhotosScreen,
+    },
+    Profile: {
+      path: 'people/:name',
+      screen: MyProfileScreen,
+    },
   },
   {
-    initialRouteName: 'List',
+    // headerLayoutPreset: 'center',
   }
 );
+
+export default SimpleStack;

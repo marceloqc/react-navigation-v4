@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { BlurView } from 'expo-blur';
-import { getStatusBarHeight } from 'react-native-iphone-x-helper';
+import { isIphoneX } from 'react-native-iphone-x-helper';
 import {
   NavigationEventPayload,
   NavigationEventSubscription,
@@ -10,14 +10,14 @@ import {
 } from 'react-navigation';
 import {
   createStackNavigator,
-  HeaderStyleInterpolators,
+  Header,
+  HeaderStyleInterpolator,
   NavigationStackScreenProps,
   NavigationStackProp,
-  TransitionPresets,
 } from 'react-navigation-stack';
-import { Button } from './Shared/ButtonWithMargin';
-import { HeaderButtons } from './Shared/HeaderButtons';
-import SampleText from './Shared/SampleText';
+import { Button } from './commonComponents/ButtonWithMargin';
+import { HeaderButtons } from './commonComponents/HeaderButtons';
+import SampleText from './SampleText';
 
 interface MyNavScreenProps {
   navigation: NavigationStackProp;
@@ -25,27 +25,6 @@ interface MyNavScreenProps {
 }
 
 class MyNavScreen extends React.Component<MyNavScreenProps> {
-  // Inset to compensate for navigation bar being transparent.
-  // And improved abstraction for this will be built in to react-navigation
-  // at some point.
-
-  getHeaderInset(): any {
-    const HEADER_HEIGHT =
-      getStatusBarHeight() + Platform.select({ ios: 44, default: 56 });
-
-    return Platform.select({
-      android: {
-        contentContainerStyle: {
-          paddingTop: HEADER_HEIGHT,
-        },
-      },
-      ios: {
-        contentInset: { top: HEADER_HEIGHT },
-        contentOffset: { y: -HEADER_HEIGHT },
-      },
-    });
-  }
-
   render() {
     const { navigation, banner } = this.props;
     const { push, replace, popToTop, pop } = navigation;
@@ -71,6 +50,34 @@ class MyNavScreen extends React.Component<MyNavScreenProps> {
       </ScrollView>
     );
   }
+
+  // Inset to compensate for navigation bar being transparent.
+  // And improved abstraction for this will be built in to react-navigation
+  // at some point.
+
+  getHeaderInset(): any {
+    const NOTCH_HEIGHT = isIphoneX() ? 25 : 0;
+
+    // $FlowIgnore: we will remove the HEIGHT static soon enough
+    const BASE_HEADER_HEIGHT = Header.HEIGHT;
+
+    const HEADER_HEIGHT =
+      Platform.OS === 'ios'
+        ? BASE_HEADER_HEIGHT + NOTCH_HEIGHT
+        : BASE_HEADER_HEIGHT + 20;
+
+    return Platform.select({
+      android: {
+        contentContainerStyle: {
+          paddingTop: HEADER_HEIGHT,
+        },
+      },
+      ios: {
+        contentInset: { top: HEADER_HEIGHT },
+        contentOffset: { y: -HEADER_HEIGHT },
+      },
+    });
+  }
 }
 
 interface MyHomeScreenProps {
@@ -78,7 +85,6 @@ interface MyHomeScreenProps {
 }
 
 class MyHomeScreen extends React.Component<MyHomeScreenProps> {
-  // eslint-disable-next-line react/sort-comp
   static navigationOptions = {
     title: 'Welcome',
   };
@@ -187,12 +193,10 @@ MyProfileScreen.navigationOptions = (props: {
   const { state, setParams } = navigation;
   const { params } = state;
   return {
-    headerBackImage: params!.headerBackImage
-      ? () => params!.headerBackImage
-      : undefined,
+    headerBackImage: params!.headerBackImage,
     // Render a button on the right side of the header.
     // When pressed switches the screen to edit mode.
-    headerRight: () => (
+    headerRight: (
       <HeaderButtons>
         <HeaderButtons.Item
           color={theme === 'light' ? '#000' : '#fff'}
@@ -223,8 +227,7 @@ const StackWithTranslucentHeader = createStackNavigator(
   },
   {
     defaultNavigationOptions: ({ theme }: NavigationStackScreenProps) => ({
-      ...TransitionPresets.SlideFromRightIOS,
-      headerBackground: () =>
+      headerBackground:
         Platform.OS === 'ios' ? (
           <BlurView
             style={{ flex: 1 }}
@@ -238,7 +241,13 @@ const StackWithTranslucentHeader = createStackNavigator(
         borderBottomWidth: StyleSheet.hairlineWidth,
       },
       headerTransparent: true,
-      headerStyleInterpolator: HeaderStyleInterpolators.forUIKit,
+    }),
+    headerTransitionPreset: 'uikit',
+    // You can leave this out if you don't want the card shadow to
+    // be visible through the header
+    transitionConfig: () => ({
+      headerBackgroundInterpolator:
+        HeaderStyleInterpolator.forBackgroundWithTranslation,
     }),
   }
 );
