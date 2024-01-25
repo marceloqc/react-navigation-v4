@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@react-navigation/core": "^3.5.1",
-    "@react-navigation/native": "^3.6.2"
+    "@react-navigation/native": "github:marceloqc/react-navigation-native"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^8.0.0",
