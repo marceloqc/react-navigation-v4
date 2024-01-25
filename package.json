@@ -1,5 +1,5 @@
 {
-  "description": "React Navigations",
+  "description": "React Navigation",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
